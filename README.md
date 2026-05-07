@@ -17,7 +17,6 @@ HostMind centraliza la gestión de propiedades, reservas, clientes y comunicaci�
 | **Mensajes** | Bandeja integrada con Facebook Messenger |
 | **Chatbot** | Flujo de 5 pasos para captar y cualificar leads sin dependencias externas |
 | **Asistente IA** | Chat interno con acceso a los datos reales del negocio (Groq / LLaMA) |
-| **Reseñas** | Gestión de opiniones con respuesta del propietario |
 | **Conectividad** | Integración con Facebook Messenger vía webhook |
 | **Exportación** | Clientes, reservas e ingresos en CSV o JSON |
 
@@ -73,7 +72,7 @@ FACEBOOK_WEBHOOK_VERIFY_TOKEN=""
 
 | Usuario | Contraseña | Descripción |
 |---|---|---|
-| `owner` | `owner123` | Demo completo — 4 propiedades, 10 clientes, reservas y reseñas de ejemplo |
+| `owner` | `owner123` | Demo completo — 4 propiedades, 10 clientes y reservas de ejemplo |
 | `admin` | `admin123` | Cuenta limpia — borra todos los datos de demo al iniciar sesión |
 
 ---
@@ -160,14 +159,6 @@ erDiagram
         string status
         float totalPrice
     }
-    REVIEW {
-        string id PK
-        string guestName
-        string propertyId
-        int rating
-        string source
-        string response
-    }
     AI_CONFIG {
         string id PK
         string ownerName
@@ -194,7 +185,6 @@ erDiagram
     CLIENT ||--o{ BOOKING : "vinculado a"
     PROPERTY ||--o{ BOOKING : "en calendario"
     PROPERTY ||--o{ PROPERTY_BOOKING : "tiene"
-    PROPERTY ||--o{ REVIEW : "recibe"
 ```
 
 ---
@@ -214,9 +204,8 @@ flowchart LR
             UC1["Ver dashboard"]
             UC2["Gestionar propiedades"]
             UC3["Calendario de reservas"]
-            UC4["Gestionar reseñas"]
-            UC5["Exportar datos"]
-            UC6["Ver estadísticas"]
+            UC4["Exportar datos"]
+            UC5["Ver estadísticas"]
         end
         subgraph C["Comunicación"]
             UC7["Leer mensajes"]
@@ -237,7 +226,7 @@ flowchart LR
         end
     end
 
-    P --> UC1 & UC2 & UC3 & UC4 & UC5 & UC6
+    P --> UC1 & UC2 & UC3 & UC4 & UC5
     P --> UC7 & UC8 & UC9 & UC10 & UC11
     L --> UC14 --> UC15 --> UC16 --> UC17 --> UC12
     FB --> UC7 & UC13
