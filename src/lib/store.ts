@@ -124,19 +124,6 @@ export interface Activity {
   createdAt: string
 }
 
-export interface Review {
-  id: string
-  guestName: string
-  propertyId?: string | null
-  propertyName?: string | null
-  rating: number
-  comment?: string | null
-  source: string
-  response?: string | null
-  respondedAt?: string | null
-  createdAt: string
-}
-
 interface AppState {
   // Auth
   token: string | null
@@ -193,10 +180,6 @@ interface AppState {
   activities: Activity[]
   setActivities: (activities: Activity[]) => void
 
-  // Reviews
-  reviews: Review[]
-  setReviews: (reviews: Review[]) => void
-
   // Theme
   theme: 'dark' | 'light'
   setTheme: (theme: 'dark' | 'light') => void
@@ -214,7 +197,7 @@ export const useAppStore = create<AppState>((set) => ({
   clearAuth: () => {
     localStorage.removeItem('hm_token')
     localStorage.removeItem('hm_user')
-    set({ token: null, user: null, clients: [], properties: [], notifications: [], activities: [], reviews: [] })
+    set({ token: null, user: null, clients: [], properties: [], notifications: [], activities: [] })
   },
 
   // Navigation
@@ -266,10 +249,6 @@ export const useAppStore = create<AppState>((set) => ({
   // Activity
   activities: [],
   setActivities: (activities) => set({ activities }),
-
-  // Reviews
-  reviews: [],
-  setReviews: (reviews) => set({ reviews }),
 
   // Theme
   theme: (typeof window !== 'undefined' ? localStorage.getItem('hm_theme') : null) === 'light' ? 'light' : 'dark',

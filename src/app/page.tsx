@@ -19,7 +19,6 @@ import CalendarView from '@/components/views/CalendarView'
 import PropertiesView from '@/components/views/PropertiesView'
 import PropertyDetailView from '@/components/views/PropertyDetailView'
 import ResultsView from '@/components/views/ResultsView'
-import ReviewsView from '@/components/views/ReviewsView'
 import ConnectivityView from '@/components/views/ConnectivityView'
 import SettingsView from '@/components/views/SettingsView'
 
@@ -35,7 +34,6 @@ function AppViews() {
     case 'properties': return <PropertiesView />
     case 'property-detail': return <PropertyDetailView />
     case 'results': return <ResultsView />
-    case 'reviews': return <ReviewsView />
     case 'connectivity': return <ConnectivityView />
     case 'settings': return <SettingsView />
     case 'ai-assistant': return <AIAssistantView />
@@ -58,12 +56,11 @@ export default function Page() {
             const data = await res.json()
             useAppStore.getState().setAuth(savedToken, { username: data.username, name: data.name })
             API('/api/seed', savedToken, { method: 'POST' })
-            const [clientsRes, notifRes, actRes, propsRes, reviewsRes, connRes] = await Promise.all([
+            const [clientsRes, notifRes, actRes, propsRes, connRes] = await Promise.all([
               API('/api/clients', savedToken),
               API('/api/notifications', savedToken),
               API('/api/activity', savedToken),
               API('/api/properties', savedToken),
-              API('/api/reviews', savedToken),
               API('/api/connectivity', savedToken),
             ])
             if (clientsRes.ok) setClients(await clientsRes.json())
@@ -74,10 +71,6 @@ export default function Page() {
             }
             if (actRes.ok) useAppStore.getState().setActivities(await actRes.json())
             if (propsRes.ok) useAppStore.getState().setProperties(await propsRes.json())
-            if (reviewsRes.ok) {
-              const reviewsData = await reviewsRes.json()
-              useAppStore.getState().setReviews(reviewsData.reviews || [])
-            }
             if (connRes.ok) useAppStore.getState().setConnections(await connRes.json())
             navigate('dashboard')
           } else {

@@ -43,7 +43,6 @@ async function clearAllOperationalData() {
   await db.booking.deleteMany({})
   await db.message.deleteMany({})
   await db.client.deleteMany({})
-  await db.review.deleteMany({})
   await db.activityLog.deleteMany({})
   await db.notification.deleteMany({})
   await db.property.deleteMany({})
@@ -390,97 +389,6 @@ async function seedDemoData() {
     { propertyId: pSol.id, guestName: 'Sarah Johnson', startDate: '2026-03-20', endDate: '2026-03-27', status: 'completed', totalPrice: 640 },
   ]})
 
-  await db.review.createMany({ data: [
-    {
-      guestName: 'María García', propertyId: pSol.id, propertyName: 'Apartamento Sol y Mar',
-      rating: 5, source: 'direct',
-      comment: 'Absolutamente perfecto para nuestra luna de miel. El apartamento estaba impecable, la terraza con vistas al mar es espectacular y la ubicación inmejorable. El propietario muy atento y resolutivo. ¡Repetiremos seguro!',
-      response: 'Muchas gracias María, fue un placer teneros. ¡Os deseamos muchos años de felicidad! Estaremos encantados de recibirlos de nuevo.',
-      respondedAt: daysAgo(5),
-      createdAt: daysAgo(6),
-    },
-    {
-      guestName: 'Klaus Müller', propertyId: pSol.id, propertyName: 'Apartamento Sol y Mar',
-      rating: 5, source: 'booking',
-      comment: 'Wunderschöne Wohnung in toller Lage. Alles war perfekt sauber und genau wie beschrieben. Der Vermieter war sehr hilfreich. Sehr empfehlenswert!',
-      response: 'Vielen Dank Klaus! We\'re so happy you enjoyed your stay in Benidorm. You\'re welcome back anytime!',
-      respondedAt: daysAgo(20),
-      createdAt: daysAgo(22),
-    },
-    {
-      guestName: 'Sarah Johnson', propertyId: pSol.id, propertyName: 'Apartamento Sol y Mar',
-      rating: 4, source: 'airbnb',
-      comment: 'Great apartment, very clean and well located. The terrace is wonderful! Only minor issue was the AC making some noise at night but otherwise perfect.',
-      response: 'Thank you Sarah! We appreciate your feedback about the AC, we\'ve had it serviced since then. Hope to see you again!',
-      respondedAt: daysAgo(35),
-      createdAt: daysAgo(38),
-    },
-    {
-      guestName: 'Pierre Lefebvre', propertyId: pSol.id, propertyName: 'Apartamento Sol y Mar',
-      rating: 4, source: 'booking',
-      comment: 'Très bon appartement, propre et bien situé. La terrasse est magnifique. Nous reviendrons!',
-      createdAt: daysAgo(45),
-    },
-    {
-      guestName: 'Carlos López', propertyId: pVilla.id, propertyName: 'Villa Costa Dorada',
-      rating: 5, source: 'direct',
-      comment: 'La villa superó todas nuestras expectativas. Piscina impecable, jardín enorme y la casa perfectamente equipada. Mis hijos no querían irse. El propietario nos facilitó todo, muy recomendable.',
-      response: '¡Gracias Carlos! Es un placer recibir a familias tan agradables. Los esperamos el próximo verano.',
-      respondedAt: daysAgo(10),
-      createdAt: daysAgo(12),
-    },
-    {
-      guestName: 'Famille Dupont', propertyId: pVilla.id, propertyName: 'Villa Costa Dorada',
-      rating: 5, source: 'airbnb',
-      comment: 'Villa absolument magnifique! Piscine parfaite, maison très bien équipée. Nous avons passé des vacances inoubliables. Propriétaire très réactif. 5 étoiles méritées!',
-      createdAt: daysAgo(2),
-    },
-    {
-      guestName: 'Thomas Weber', propertyId: pVilla.id, propertyName: 'Villa Costa Dorada',
-      rating: 5, source: 'booking',
-      comment: 'Excellent villa with everything you need. Pool was clean and warm, garden beautiful. Kids loved it. Will definitely return next summer.',
-      response: 'Thank you Thomas! So glad the whole family had a wonderful time. See you next year!',
-      respondedAt: daysAgo(25),
-      createdAt: daysAgo(28),
-    },
-    {
-      guestName: 'Yuki Tanaka', propertyId: pEstudio.id, propertyName: 'Estudio Centro Barcelona',
-      rating: 5, source: 'airbnb',
-      comment: 'Perfect studio in the heart of Barcelona! Super clean, great wifi, and the location is unbeatable. 5 minutes walk to Paseo de Gracia. The Nespresso machine was a lovely touch!',
-      response: '¡Gracias Yuki! We\'re delighted you loved the studio. Barcelona is indeed a beautiful city to explore!',
-      respondedAt: daysAgo(25),
-      createdAt: daysAgo(27),
-    },
-    {
-      guestName: 'Lucía Fernández', propertyId: pEstudio.id, propertyName: 'Estudio Centro Barcelona',
-      rating: 4, source: 'direct',
-      comment: 'Estudio moderno y muy bien ubicado. Perfecto para una escapada de fin de semana. La cama muy cómoda y el baño impecable. Volveremos seguro.',
-      createdAt: daysAgo(14),
-    },
-    {
-      guestName: 'Marco Rossi', propertyId: pEstudio.id, propertyName: 'Estudio Centro Barcelona',
-      rating: 4, source: 'booking',
-      comment: 'Studio molto carino e ben posizionato nel centro di Barcellona. Pulito e moderno. Consigliatissimo!',
-      createdAt: daysAgo(42),
-    },
-    {
-      guestName: 'Anna Schmidt', propertyId: pEstudio.id, propertyName: 'Estudio Centro Barcelona',
-      rating: 3, source: 'airbnb',
-      comment: 'Good location but the studio is quite small. Kitchen is basic. Wifi was excellent though.',
-      response: 'Thank you Anna for your honest feedback! We\'ve added a few extra kitchen tools since. Hope to welcome you again.',
-      respondedAt: daysAgo(55),
-      createdAt: daysAgo(58),
-    },
-    {
-      guestName: 'Javier Moreno', propertyId: pVilla.id, propertyName: 'Villa Costa Dorada',
-      rating: 5, source: 'google',
-      comment: 'Incomparable. La villa es exactamente como en las fotos, con una piscina fantástica. El trato del propietario es excelente, muy pendiente de cualquier necesidad. 100% recomendable.',
-      response: 'Muchísimas gracias Javier, es un orgullo leer estas palabras. ¡Os esperamos pronto!',
-      respondedAt: daysAgo(18),
-      createdAt: daysAgo(20),
-    },
-  ]})
-
   await db.activityLog.createMany({ data: [
     { type: 'client_created', title: 'Nuevo lead: Elena Gómez', content: 'Canal: Web · Sin clasificar', createdAt: hoursAgo(1) },
     { type: 'client_created', title: 'Nuevo lead: Miguel Fernández', content: 'Canal: Facebook · En conversación', createdAt: hoursAgo(3) },
@@ -492,13 +400,11 @@ async function seedDemoData() {
     { type: 'property_created', title: 'Check-out completado: Estudio BCN', content: 'Yuki Tanaka · 5 noches · 475€ cobrados', createdAt: daysAgo(7) },
     { type: 'action_taken', title: 'Reserva confirmada: María García', content: 'Apartamento Sol y Mar · Agosto 10–20 · 900€', createdAt: daysAgo(7) },
     { type: 'client_created', title: 'Lead TOP aceptado: María García', content: 'Puntuación: 90 · Luna de miel · 10 noches', createdAt: daysAgo(8) },
-    { type: 'action_taken', title: 'Reseña recibida: Carlos López', content: '⭐⭐⭐⭐⭐ Villa Costa Dorada · Respondida', createdAt: daysAgo(10) },
     { type: 'client_created', title: 'Lead RIESGO rechazado: Pedro Jiménez', content: 'Motivo: fiesta + sobrecapacidad', createdAt: daysAgo(10) },
     { type: 'booking_created', title: 'Reserva Airbnb: Famille Dupont', content: 'Villa Costa Dorada · 18–25 Jul · 1.650€', createdAt: daysAgo(12) },
     { type: 'action_taken', title: 'Reserva confirmada: Carlos López', content: 'Villa Costa Dorada · Jul 1–15 · 3.350€', createdAt: daysAgo(13) },
     { type: 'client_created', title: 'Lead TOP aceptado: Carlos López', content: 'Puntuación: 85 · Familia · 14 noches', createdAt: daysAgo(15) },
     { type: 'property_updated', title: 'Casa Rural Sierra: estado → Mantenimiento', content: 'Revisión anual de caldera e instalación eléctrica', createdAt: daysAgo(16) },
-    { type: 'action_taken', title: 'Reseña respondida: Klaus Müller', content: '⭐⭐⭐⭐⭐ Apartamento Sol y Mar', createdAt: daysAgo(20) },
     { type: 'booking_created', title: 'Reserva Booking.com: Thomas Weber', content: 'Villa Costa Dorada · confirmada · 5 noches', createdAt: daysAgo(28) },
     { type: 'property_created', title: 'Propiedad creada: Estudio Centro Barcelona', content: 'Barcelona · 95€/noche · 2 pax', createdAt: daysAgo(60) },
     { type: 'property_created', title: 'Propiedad creada: Casa Rural Sierra Nevada', content: 'Güéjar Sierra · 140€/noche · 6 pax', createdAt: daysAgo(75) },
@@ -509,7 +415,6 @@ async function seedDemoData() {
     { userId: owner.id, type: 'message', title: 'Miguel Fernández está esperando respuesta', content: 'Interesado en el Apartamento Sol y Mar. Lleva 2 horas en conversación.', read: false, link: 'messages', createdAt: hoursAgo(2) },
     { userId: owner.id, type: 'alert', title: 'Jorge Silva: modo manual activado', content: 'El cliente ha sido transferido a gestión manual tras múltiples preguntas.', read: false, link: 'messages', createdAt: hoursAgo(4) },
     { userId: owner.id, type: 'booking', title: 'Reserva pendiente de confirmar', content: 'Ana Martínez · Estudio Barcelona · 22–25 mayo · 285€', read: true, link: 'calendar', createdAt: daysAgo(3) },
-    { userId: owner.id, type: 'message', title: 'Nueva reseña sin responder', content: 'Famille Dupont dejó una reseña de 5 estrellas en la Villa Costa Dorada.', read: true, link: 'reviews', createdAt: daysAgo(2) },
     { userId: owner.id, type: 'booking', title: 'Check-in mañana: María García', content: 'Apartamento Sol y Mar · Entrada 10 ago a las 16:00.', read: true, link: 'calendar', createdAt: daysAgo(1) },
   ]})
 }

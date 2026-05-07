@@ -4,7 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import {
   Home, MessageSquare, Calendar, BarChart3, Settings, LogOut,
-  Star, Sparkles, Building, Wifi, Bell, User,
+  Sparkles, Building, Wifi, Bell, User,
   ChevronRight
 } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
@@ -17,7 +17,6 @@ const navItems = [
   { id: 'properties', label: 'Propiedades', icon: Building },
   { id: 'calendar', label: 'Calendario', icon: Calendar },
   { id: 'results', label: 'Resultados', icon: BarChart3 },
-  { id: 'reviews', label: 'Reseñas', icon: Star },
   { id: 'connectivity', label: 'Conectividad', icon: Wifi },
 ]
 
