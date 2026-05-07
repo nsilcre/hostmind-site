@@ -1,0 +1,33 @@
+# Dependencias
+node_modules/
+
+# Build
+.next/
+
+# Base de datos
+prisma/dev.db
+prisma/dev.db-journal
+prisma/*.db
+
+# Variables de entorno
+.env
+.env.local
+.env.production
+
+# Imágenes subidas por usuarios
+public/uploads/
+
+# Archivos generados
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Logs
+*.log
+dev.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editor
+.claude/

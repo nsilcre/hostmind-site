@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HostMind — Gestión inteligente de propiedades en alquiler</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a2e; background: #fff; line-height: 1.6; }
+    a { color: #4f46e5; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header { background: #4f46e5; color: #fff; padding: 20px 40px; display: flex; align-items: center; gap: 12px; }
+    header h1 { font-size: 1.5rem; font-weight: 700; }
+    header span { font-size: 0.9rem; opacity: 0.85; }
+
+    .hero { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #fff; padding: 80px 40px; text-align: center; }
+    .hero h2 { font-size: 2.4rem; font-weight: 800; margin-bottom: 16px; }
+    .hero p { font-size: 1.15rem; max-width: 600px; margin: 0 auto; opacity: 0.9; }
+
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; padding: 60px 40px; max-width: 1000px; margin: 0 auto; }
+    .feature { background: #f8f7ff; border-radius: 12px; padding: 24px; }
+    .feature h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #4f46e5; }
+    .feature p { font-size: 0.9rem; color: #444; }
+
+    section { padding: 50px 40px; max-width: 860px; margin: 0 auto; }
+    section h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
+    section p, section li { font-size: 0.95rem; color: #333; margin-bottom: 12px; }
+    section ul { padding-left: 20px; }
+    section ul li { margin-bottom: 8px; }
+
+    .contact-box { background: #f0f0ff; border-radius: 10px; padding: 20px 24px; margin-top: 16px; }
+    .contact-box p { margin: 0; }
+
+    footer { background: #1a1a2e; color: #aaa; text-align: center; padding: 24px; font-size: 0.85rem; }
+    footer a { color: #aaa; }
+
+    nav { display: flex; justify-content: center; gap: 32px; padding: 16px; background: #f9f9f9; border-bottom: 1px solid #e5e7eb; flex-wrap: wrap; }
+    nav a { font-size: 0.9rem; font-weight: 600; color: #4f46e5; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>HostMind</h1>
+  <span>Gestión inteligente de propiedades en alquiler</span>
+</header>
+
+<nav>
+  <a href="#about">Sobre la app</a>
+  <a href="#features">Funcionalidades</a>
+  <a href="#messenger">Integración con Messenger</a>
+  <a href="#privacy">Política de privacidad</a>
+  <a href="#terms">Términos de uso</a>
+  <a href="#contact">Contacto</a>
+</nav>
+
+<div class="hero">
+  <h2>Gestiona tus propiedades en alquiler desde un solo lugar</h2>
+  <p>HostMind centraliza la gestión de propiedades, inquilinos, reservas y mensajes — incluyendo comunicación directa a través de Facebook Messenger.</p>
+</div>
+
+<div class="features">
+  <div class="feature">
+    <h3>Dashboard</h3>
+    <p>Resumen en tiempo real de ingresos, ocupación y actividad reciente.</p>
+  </div>
+  <div class="feature">
+    <h3>Propiedades</h3>
+    <p>Gestiona tu cartera de propiedades, detalles y disponibilidad.</p>
+  </div>
+  <div class="feature">
+    <h3>Calendario</h3>
+    <p>Visualiza y administra reservas y ocupación por fechas.</p>
+  </div>
+  <div class="feature">
+    <h3>Mensajes</h3>
+    <p>Comunicación centralizada con inquilinos, incluyendo Facebook Messenger.</p>
+  </div>
+  <div class="feature">
+    <h3>Reseñas</h3>
+    <p>Gestiona las valoraciones de tus propiedades en un solo panel.</p>
+  </div>
+  <div class="feature">
+    <h3>Asistente IA</h3>
+    <p>Automatiza respuestas y obtén sugerencias inteligentes de gestión.</p>
+  </div>
+</div>
+
+<section id="about">
+  <h2>Sobre HostMind</h2>
+  <p>HostMind es una aplicación web de gestión de propiedades en alquiler diseñada para propietarios e intermediarios que necesitan centralizar la administración de sus inmuebles.</p>
+  <p>La aplicación permite gestionar propiedades, reservas, inquilinos, mensajes, reseñas y estadísticas desde un único panel de control.</p>
+  <p>Una de las funcionalidades clave es la integración con Facebook Messenger, que permite a los propietarios recibir y responder mensajes de inquilinos potenciales directamente desde HostMind, sin salir de la plataforma.</p>
+</section>
+
+<section id="messenger">
+  <h2>Integración con Facebook Messenger</h2>
+  <p>HostMind utiliza la API de Facebook Messenger (permiso <strong>pages_messaging</strong>) para permitir a los usuarios de la plataforma:</p>
+  <ul>
+    <li>Recibir mensajes de inquilinos potenciales enviados a través de la página de Facebook asociada a su propiedad.</li>
+    <li>Responder mensajes directamente desde el panel de HostMind.</li>
+    <li>Centralizar toda la comunicación con inquilinos en un único lugar.</li>
+  </ul>
+  <p>Esta integración requiere que el usuario conecte su Página de Facebook a HostMind desde el panel de conectividad de la aplicación. HostMind únicamente accede a los mensajes de la página autorizada por el usuario.</p>
+</section>
+
+<section id="privacy">
+  <h2>Política de privacidad</h2>
+  <p><strong>Última actualización:</strong> 22 de abril de 2026</p>
+
+  <p>En HostMind nos comprometemos a proteger la privacidad de nuestros usuarios. Esta política describe qué datos recogemos, cómo los usamos y cómo los protegemos.</p>
+
+  <h3 style="margin: 20px 0 8px; font-size:1rem;">1. Datos que recogemos</h3>
+  <ul>
+    <li>Información de cuenta: nombre, dirección de correo electrónico y contraseña (almacenada con hash).</li>
+    <li>Datos de propiedades e inquilinos que el usuario introduce manualmente en la plataforma.</li>
+    <li>Mensajes recibidos y enviados a través de la integración con Facebook Messenger, únicamente de las páginas que el usuario haya autorizado.</li>
+    <li>Datos de uso de la aplicación para mejorar el servicio.</li>
+  </ul>
+
+  <h3 style="margin: 20px 0 8px; font-size:1rem;">2. Uso de los datos</h3>
+  <ul>
+    <li>Proporcionar y mejorar el servicio de HostMind.</li>
+    <li>Mostrar y gestionar mensajes de Facebook Messenger en el panel del usuario.</li>
+    <li>Enviar notificaciones relacionadas con la actividad de la cuenta.</li>
+    <li>No vendemos ni compartimos datos personales con terceros para fines publicitarios.</li>
+  </ul>
+
+  <h3 style="margin: 20px 0 8px; font-size:1rem;">3. Datos de Facebook Messenger</h3>
+  <p>Cuando el usuario conecta su Página de Facebook, HostMind accede únicamente a los mensajes de dicha página mediante el permiso <strong>pages_messaging</strong>. Estos datos se utilizan exclusivamente para mostrarlos dentro de la plataforma al usuario autorizado. No compartimos estos datos con terceros ni los usamos para ningún otro fin.</p>
+  <p>El usuario puede revocar el acceso en cualquier momento desde la configuración de su cuenta de Facebook o desde el panel de conectividad de HostMind.</p>
+
+  <h3 style="margin: 20px 0 8px; font-size:1rem;">4. Almacenamiento y seguridad</h3>
+  <p>Los datos se almacenan de forma segura. Las contraseñas se almacenan con hash y nunca en texto plano. Las sesiones están protegidas mediante tokens seguros.</p>
+
+  <h3 style="margin: 20px 0 8px; font-size:1rem;">5. Derechos del usuario</h3>
+  <p>El usuario puede solicitar en cualquier momento el acceso, rectificación o eliminación de sus datos contactando con nosotros en la dirección indicada abajo.</p>
+
+  <h3 style="margin: 20px 0 8px; font-size:1rem;">6. Contacto</h3>
+  <p>Para cualquier consulta sobre privacidad, escríbenos a: <a href="mailto:nsilcre432@g.educaand.es">nsilcre432@g.educaand.es</a></p>
+</section>
+
+<section id="terms">
+  <h2>Términos de uso</h2>
+  <p><strong>Última actualización:</strong> 22 de abril de 2026</p>
+
+  <p>Al usar HostMind aceptas los siguientes términos:</p>
+  <ul>
+    <li>El servicio se proporciona "tal cual" para la gestión de propiedades en alquiler.</li>
+    <li>Eres responsable de la información que introduces en la plataforma.</li>
+    <li>No debes usar la plataforma para actividades ilegales o contrarias a las políticas de Meta/Facebook.</li>
+    <li>Nos reservamos el derecho de suspender cuentas que incumplan estos términos.</li>
+    <li>El servicio puede modificarse o interrumpirse con aviso previo.</li>
+  </ul>
+  <p>Para cualquier consulta: <a href="mailto:nsilcre432@g.educaand.es">nsilcre432@g.educaand.es</a></p>
+</section>
+
+<section id="contact">
+  <h2>Contacto</h2>
+  <div class="contact-box">
+    <p>¿Preguntas sobre HostMind o sobre el uso de tus datos?</p>
+    <p style="margin-top:10px;">Email: <a href="mailto:nsilcre432@g.educaand.es">nsilcre432@g.educaand.es</a></p>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 HostMind. Todos los derechos reservados.</p>
+  <p style="margin-top:6px;"><a href="#privacy">Política de privacidad</a> · <a href="#terms">Términos de uso</a></p>
+</footer>
+
+</body>
+</html>
