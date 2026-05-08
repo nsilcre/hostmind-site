@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
       }),
     ])
 
-    if (session?.username === 'admin') {
+    const body = await req.json().catch(() => ({}))
+    if (session?.username === 'admin' && body?.action === 'clear') {
       await clearAllOperationalData()
     } else if (session?.username === 'owner') {
       await seedDemoData()
