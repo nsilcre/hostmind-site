@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: hostmind-site
+    env: node
+    plan: free
+    buildCommand: npm install && npx prisma db push && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hostmind-db
+          property: connectionString
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: GROQ_API_KEY
+        sync: false
+      - key: FACEBOOK_APP_ID
+        sync: false
+      - key: FACEBOOK_APP_SECRET
+        sync: false
+      - key: FACEBOOK_WEBHOOK_VERIFY_TOKEN
+        sync: false
+
+databases:
+  - name: hostmind-db
+    databaseName: hostmind
+    plan: free
