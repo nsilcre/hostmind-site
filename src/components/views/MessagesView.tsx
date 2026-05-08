@@ -34,7 +34,7 @@ interface FBConversation {
 }
 
 export default function MessagesView() {
-  const { navigate, token, connections, clients, setActiveChat } = useAppStore()
+  const { navigate, token, connections, clients } = useAppStore()
   const { addToast } = useToasts()
 
   const [fbConversations, setFbConversations] = useState<FBConversation[]>([])
@@ -146,7 +146,7 @@ export default function MessagesView() {
                     key={client.id}
                     variants={slideUp}
                     transition={{ delay: i * 0.03 }}
-                    onClick={() => { setActiveChat(client.id); navigate('chat') }}
+                    onClick={() => navigate('chat', { clientId: client.id })}
                     className="flex items-center gap-3 rounded-xl border border-blue-500/10 bg-card/60 hover:bg-card/80 p-3.5 cursor-pointer transition-all active:scale-[0.98] group"
                   >
                     <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
