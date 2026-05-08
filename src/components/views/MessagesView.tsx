@@ -34,7 +34,7 @@ interface FBConversation {
 }
 
 export default function MessagesView() {
-  const { navigate, token, connections } = useAppStore()
+  const { navigate, token, connections, clients, setActiveChat } = useAppStore()
   const { addToast } = useToasts()
 
   const [fbConversations, setFbConversations] = useState<FBConversation[]>([])
@@ -44,6 +44,7 @@ export default function MessagesView() {
   const [fbSearch, setFbSearch] = useState('')
 
   const isFbConnected = connections['facebook']?.connected ?? false
+  const fbDemoClients = clients.filter(c => c.channel?.toLowerCase() === 'facebook')
 
   const fetchFbConversations = useCallback(async () => {
     if (!token || !isFbConnected) return
@@ -119,19 +120,53 @@ export default function MessagesView() {
       </div>
 
       {!isFbConnected ? (
-        <motion.div {...fadeIn} className="text-center py-16">
-          <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center mx-auto mb-4">
-            <Facebook className="size-8 text-blue-500" />
+        <>
+          <div className="flex items-center gap-2 rounded-xl border border-blue-500/20 bg-blue-500/5 px-4 py-2.5 text-xs text-blue-400">
+            <Facebook className="size-3.5 shrink-0" />
+            <span className="flex-1">Conecta tu página de Facebook para recibir mensajes en tiempo real.</span>
+            <Button size="sm" onClick={() => navigate('connectivity')}
+              className="h-6 text-[10px] px-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shrink-0">
+              Conectar
+            </Button>
           </div>
-          <h3 className="font-semibold text-foreground mb-2">Facebook no conectado</h3>
-          <p className="text-sm text-muted-foreground mb-4 max-w-xs mx-auto">
-            Conecta tu Página de Facebook para ver y responder mensajes de Messenger
-          </p>
-          <Button onClick={() => navigate('connectivity')}
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-            <Facebook className="size-4 mr-2" /> Ir a Conectividad
-          </Button>
-        </motion.div>
+
+          {fbDemoClients.length === 0 ? (
+            <motion.div {...fadeIn} className="text-center py-12">
+              <MessageSquare className="size-12 text-zinc-600 mx-auto mb-3" />
+              <p className="text-zinc-400 font-medium">No hay conversaciones</p>
+              <p className="text-xs text-zinc-500 mt-1">Los mensajes de tu página de Facebook aparecerán aquí</p>
+            </motion.div>
+          ) : (
+            <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-2">
+              {fbDemoClients.map((client, i) => {
+                const profile = client.profile ? (() => { try { return JSON.parse(client.profile!) } catch { return {} } })() : {}
+                const summary = client.summary || profile?.purpose || 'Sin mensajes'
+                return (
+                  <motion.div
+                    key={client.id}
+                    variants={slideUp}
+                    transition={{ delay: i * 0.03 }}
+                    onClick={() => { setActiveChat(client.id); navigate('chat') }}
+                    className="flex items-center gap-3 rounded-xl border border-blue-500/10 bg-card/60 hover:bg-card/80 p-3.5 cursor-pointer transition-all active:scale-[0.98] group"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                      <Facebook className="size-5 text-blue-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-sm text-foreground truncate">{client.name}</h3>
+                        <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/20 shrink-0">FB</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate mt-0.5">{summary}</p>
+                      <p className="text-[10px] text-zinc-500 mt-0.5">{timeAgo(client.createdAt)}</p>
+                    </div>
+                    <ChevronRight className="size-4 text-zinc-500 group-hover:text-blue-400 transition-colors shrink-0" />
+                  </motion.div>
+                )
+              })}
+            </motion.div>
+          )}
+        </>
       ) : fbPermError ? (
         <motion.div {...fadeIn} className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 space-y-4">
           <div className="flex items-start gap-3">
