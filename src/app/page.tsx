@@ -55,7 +55,6 @@ export default function Page() {
           if (res.ok) {
             const data = await res.json()
             useAppStore.getState().setAuth(savedToken, { username: data.username, name: data.name })
-            API('/api/seed', savedToken, { method: 'POST' })
             const [clientsRes, notifRes, actRes, propsRes, connRes] = await Promise.all([
               API('/api/clients', savedToken),
               API('/api/notifications', savedToken),
