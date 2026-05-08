@@ -20,6 +20,12 @@ async function handleIncomingMessage(
   messageText: string,
   messageId?: string
 ) {
+  // Dedup: skip if this exact message was already processed by a concurrent request
+  if (messageId) {
+    const alreadyProcessed = await db.message.findFirst({ where: { sourceId: messageId } })
+    if (alreadyProcessed) return
+  }
+
   let client = await db.client.findFirst({ where: { sourceId: senderId, channel: 'Facebook' } })
   if (!client) {
     client = await db.client.create({
@@ -27,6 +33,9 @@ async function handleIncomingMessage(
     })
   }
   if (client.isManual) return
+
+  // Don't auto-respond to conversations already resolved by the host
+  if (['confirmed', 'accepted', 'rejected'].includes(client.status)) return
 
   await db.message.create({
     data: { clientId: client.id, role: 'user', content: messageText, sourceId: messageId },
@@ -51,7 +60,6 @@ async function handleIncomingMessage(
           messages: [
             { role: 'system', content: buildQualificationPrompt(activeProperties, aiConfig) },
             ...history.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
-            { role: 'user', content: messageText },
           ],
           max_tokens: 200,
           temperature: 0.75,
@@ -60,8 +68,11 @@ async function handleIncomingMessage(
       if (res.ok) {
         const data = await res.json()
         reply = data.choices?.[0]?.message?.content || reply
+      } else {
+        const errData = await res.json().catch(() => ({}))
+        console.error('[AI] Groq API error:', res.status, JSON.stringify(errData))
       }
-    } catch (e) { console.error('[AI] Groq error:', e) }
+    } catch (e) { console.error('[AI] Groq fetch error:', e) }
   }
 
   const markerMatch = reply.match(/\[DATOS:(\{[\s\S]*?\})\]/)
@@ -728,7 +739,7 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    await db.client.update({ where: { id: client.id }, data: { step: 3, status: 'confirmed' } })
+    await db.client.update({ where: { id: client.id }, data: { step: 3, status: 'confirmed', isManual: true } })
 
     const confirmMsg = `¡Buenas noticias! 🎉 Tu reserva en ${property?.name || profile.propiedad || 'nuestro alojamiento'} (${profile.fechas}) ha sido confirmada. Nos pondremos en contacto contigo próximamente con todos los detalles. ¡Muchas gracias y hasta pronto!`
 

@@ -13,8 +13,8 @@ export async function POST(
     if (!client) return NextResponse.json({ error: 'Cliente no encontrado' }, { status: 404 })
 
     const validActions: Record<string, { status: string; isManual: boolean }> = {
-      accept: { status: 'accepted', isManual: false },
-      reject: { status: 'rejected', isManual: false },
+      accept: { status: 'accepted', isManual: true },
+      reject: { status: 'rejected', isManual: true },
       negotiate: { status: 'negotiating', isManual: false },
       manual: { status: 'manual', isManual: true },
       auto: { status: 'classified', isManual: false },
