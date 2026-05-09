@@ -193,6 +193,30 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
   }
 
+  // AI diagnostic: test Groq connection and last client status
+  if (action === 'test-ai') {
+    const groqApiKey = process.env.GROQ_API_KEY
+    if (!groqApiKey) return NextResponse.json({ ok: false, reason: 'GROQ_API_KEY no configurada en el entorno' })
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${groqApiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: 'Di "OK" y nada más.' }],
+          max_tokens: 10,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) return NextResponse.json({ ok: false, reason: `Groq error ${res.status}`, detail: data })
+      const reply = data.choices?.[0]?.message?.content
+      const lastClients = await db.client.findMany({ where: { channel: 'Facebook' }, orderBy: { updatedAt: 'desc' }, take: 5, select: { id: true, name: true, status: true, isManual: true, updatedAt: true } })
+      return NextResponse.json({ ok: true, groqReply: reply, lastClients })
+    } catch (e) {
+      return NextResponse.json({ ok: false, reason: 'Excepción llamando a Groq', detail: String(e) })
+    }
+  }
+
   // Connection status
   if (action === 'status') {
     const connection = await getFacebookConnection()
