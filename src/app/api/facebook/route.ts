@@ -48,6 +48,7 @@ async function handleIncomingMessage(
     data: { clientId: client.id, role: 'user', content: messageText, sourceId: messageId },
   })
 
+  console.log(`[AI] Processing message from client=${client.id} step=${client.step}`)
   const groqApiKey = process.env.GROQ_API_KEY
   let reply: string | null = null
 
@@ -92,7 +93,10 @@ async function handleIncomingMessage(
   }
 
   // If Groq failed or returned nothing, don't send any message — admin will handle it manually
-  if (!reply) return
+  if (!reply) {
+    console.error('[AI] No reply generated (Groq failed or key missing)')
+    return
+  }
 
   const markerMatch = reply.match(/\[DATOS:(\{[\s\S]*?\})\]/)
   const pesadoMatch = reply.includes('[PESADO]')
@@ -159,7 +163,10 @@ async function handleIncomingMessage(
 
 async function handleWebhookEvents(entries: unknown[]) {
   const connection = await getFacebookConnection()
-  if (!connection?.accessToken) return
+  if (!connection?.accessToken) {
+    console.error('[Webhook] No Facebook connection with accessToken found in DB')
+    return
+  }
 
   for (const entry of entries as { messaging?: unknown[] }[]) {
     for (const event of entry.messaging || []) {
@@ -438,6 +445,7 @@ export async function POST(req: NextRequest) {
 
   // Facebook webhook incoming message event — respond immediately, process async
   if (body.object === 'page') {
+    console.log(`[Webhook] event received, entries: ${body.entry?.length ?? 0}`)
     handleWebhookEvents(body.entry || []).catch(e => console.error('[Webhook] unhandled error:', e))
     return NextResponse.json({ status: 'ok' })
   }
