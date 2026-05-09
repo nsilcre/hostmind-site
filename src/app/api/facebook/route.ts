@@ -20,10 +20,12 @@ async function handleIncomingMessage(
   messageText: string,
   messageId?: string
 ) {
+  console.log(`[AI] Incoming: sender=${senderId} mid=${messageId} text="${messageText.slice(0, 40)}"`)
+
   // Dedup: skip if this exact message was already processed by a concurrent request
   if (messageId) {
     const alreadyProcessed = await db.message.findFirst({ where: { sourceId: messageId } })
-    if (alreadyProcessed) return
+    if (alreadyProcessed) { console.log(`[AI] Skipped dedup mid=${messageId}`); return }
   }
 
   let client = await db.client.findFirst({ where: { sourceId: senderId, channel: 'Facebook' } })
@@ -32,10 +34,13 @@ async function handleIncomingMessage(
       data: { name: senderName, channel: 'Facebook', sourceId: senderId, status: 'pending', isManual: false, step: 0 },
     })
   }
-  if (client.isManual) return
+  if (client.isManual) { console.log(`[AI] Skipped isManual client=${client.id}`); return }
 
   // Don't auto-respond to conversations already resolved by the host
-  if (['confirmed', 'accepted', 'rejected'].includes(client.status)) return
+  if (['confirmed', 'accepted', 'rejected'].includes(client.status)) {
+    console.log(`[AI] Skipped status=${client.status} client=${client.id}`)
+    return
+  }
 
   // Fetch history BEFORE saving current message so the Groq array never has timing issues
   const [aiConfig, activeProperties, history] = await Promise.all([
@@ -434,6 +439,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
+  console.log('[POST] body.object=', body.object, 'action=', body.action)
   const { action } = body
 
   // Facebook webhook incoming message event — respond immediately, process async
