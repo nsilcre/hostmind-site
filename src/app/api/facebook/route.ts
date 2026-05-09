@@ -225,7 +225,15 @@ export async function GET(req: NextRequest) {
       if (!res.ok) return NextResponse.json({ ok: false, reason: `Groq error ${res.status}`, detail: data })
       const reply = data.choices?.[0]?.message?.content
       const lastClients = await db.client.findMany({ where: { channel: 'Facebook' }, orderBy: { updatedAt: 'desc' }, take: 5, select: { id: true, name: true, status: true, isManual: true, updatedAt: true } })
-      return NextResponse.json({ ok: true, groqReply: reply, lastClients })
+      const connection = await getFacebookConnection()
+      return NextResponse.json({
+        ok: true,
+        groqReply: reply,
+        fbConnected: !!connection?.accessToken,
+        fbPage: connection?.pageName || null,
+        fbPageId: connection?.pageId || null,
+        lastClients,
+      })
     } catch (e) {
       return NextResponse.json({ ok: false, reason: 'Excepción llamando a Groq', detail: String(e) })
     }
