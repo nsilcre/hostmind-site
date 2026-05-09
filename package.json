@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "prisma db push && next build && node -e \"require('fs').cpSync('.next/static','.next/standalone/.next/static',{recursive:true});require('fs').cpSync('public','.next/standalone/public',{recursive:true});\"",
+    "build": "next build && node -e \"require('fs').cpSync('.next/static','.next/standalone/.next/static',{recursive:true});require('fs').cpSync('public','.next/standalone/public',{recursive:true});\"",
     "start": "node .next/standalone/server.js",
     "lint": "eslint .",
     "postinstall": "prisma generate",
