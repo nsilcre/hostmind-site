@@ -60,7 +60,9 @@ async function handleIncomingMessage(
           model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: buildQualificationPrompt(activeProperties, aiConfig) },
-            ...history.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
+            ...history
+              .map(m => ({ role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant', content: m.content }))
+              .filter((m, i, arr) => i === 0 || arr[i - 1].role !== m.role),
             { role: 'user', content: messageText },
           ],
           max_tokens: 200,
