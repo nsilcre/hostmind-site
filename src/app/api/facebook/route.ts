@@ -20,10 +20,12 @@ async function handleIncomingMessage(
   messageText: string,
   messageId?: string
 ) {
+  console.log(`[AI] handleIncomingMessage sender=${senderId} mid=${messageId ?? 'none'}`)
+
   // Dedup: skip if this exact message was already processed by a concurrent request
   if (messageId) {
     const alreadyProcessed = await db.message.findFirst({ where: { sourceId: messageId } })
-    if (alreadyProcessed) return
+    if (alreadyProcessed) { console.log(`[AI] Dedup: mid=${messageId} already processed`); return }
   }
 
   let client = await db.client.findFirst({ where: { sourceId: senderId, channel: 'Facebook' } })
@@ -31,11 +33,14 @@ async function handleIncomingMessage(
     client = await db.client.create({
       data: { name: senderName, channel: 'Facebook', sourceId: senderId, status: 'pending', isManual: false, step: 0 },
     })
+    console.log(`[AI] New client created id=${client.id}`)
+  } else {
+    console.log(`[AI] Existing client id=${client.id} isManual=${client.isManual} status=${client.status}`)
   }
-  if (client.isManual) return
+  if (client.isManual) { console.log(`[AI] Skipped: isManual=true`); return }
 
   // Don't auto-respond to conversations already resolved by the host
-  if (['confirmed', 'accepted', 'rejected'].includes(client.status)) return
+  if (['confirmed', 'accepted', 'rejected'].includes(client.status)) { console.log(`[AI] Skipped: status=${client.status}`); return }
 
   // Fetch history BEFORE saving current message so the Groq array never has timing issues
   const [aiConfig, activeProperties, history] = await Promise.all([
@@ -155,10 +160,19 @@ async function handleIncomingMessage(
 
   await db.message.create({ data: { clientId: client.id, role: 'assistant', content: finalReply } })
 
-  await fetch(
-    `https://graph.facebook.com/v21.0/${connection.pageId}/messages?access_token=${connection.accessToken}`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ recipient: { id: senderId }, message: { text: finalReply } }) }
-  ).catch(e => console.error('[AI] Send error:', e))
+  console.log(`[AI] Sending reply to sender=${senderId} via page=${connection.pageId}`)
+  try {
+    const sendRes = await fetch(
+      `https://graph.facebook.com/v21.0/${connection.pageId}/messages?access_token=${connection.accessToken}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ recipient: { id: senderId }, message: { text: finalReply } }) }
+    )
+    const sendData = await sendRes.json().catch(() => ({}))
+    if (!sendRes.ok) {
+      console.error(`[AI] FB send failed status=${sendRes.status}:`, JSON.stringify(sendData))
+    } else {
+      console.log(`[AI] FB send OK messageId=${sendData.message_id}`)
+    }
+  } catch (e) { console.error('[AI] Send network error:', e) }
 }
 
 async function handleWebhookEvents(entries: unknown[]) {
@@ -206,6 +220,21 @@ export async function GET(req: NextRequest) {
   }
 
   const action = searchParams.get('action')
+
+  // Full send diagnostic: verifies token + sends a real test message to the most recent FB client
+  if (action === 'test-send') {
+    const connection = await getFacebookConnection()
+    if (!connection?.accessToken) return NextResponse.json({ ok: false, reason: 'No Facebook connection' })
+    const lastFbClient = await db.client.findFirst({ where: { channel: 'Facebook', sourceId: { not: null } }, orderBy: { updatedAt: 'desc' } })
+    if (!lastFbClient?.sourceId) return NextResponse.json({ ok: false, reason: 'No Facebook clients in DB yet' })
+
+    const sendRes = await fetch(
+      `https://graph.facebook.com/v21.0/${connection.pageId}/messages?access_token=${connection.accessToken}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ recipient: { id: lastFbClient.sourceId }, message: { text: '(test) El bot está activo y puede enviarte mensajes.' } }) }
+    )
+    const sendData = await sendRes.json().catch(() => ({}))
+    return NextResponse.json({ ok: sendRes.ok, status: sendRes.status, fbResponse: sendData, sendTo: lastFbClient.sourceId, pageId: connection.pageId })
+  }
 
   // AI diagnostic — no auth required so it can be tested directly in browser
   if (action === 'test-ai') {
