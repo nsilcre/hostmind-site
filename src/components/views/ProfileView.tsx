@@ -31,17 +31,19 @@ import { API, fadeIn, staggerContainer, slideUp, scoreBg, channelIcon, statusIco
 export default function ProfileView() {
   const { clients, viewParams, navigate, token } = useAppStore()
   const { addToast } = useToasts()
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
   const client = clients.find((c) => c.id === viewParams.clientId)
 
   const handleAction = async (action: string) => {
-    if (!client || !token) return
+    if (!client || !token || actionLoading) return
+    setActionLoading(action)
     try {
       const res = await API(`/api/action/${client.id}`, token, {
         method: 'POST',
         body: JSON.stringify({ action }),
       })
+      const data = await res.json()
       if (res.ok) {
-        const data = await res.json()
         if (data.client) {
           const updated = clients.map((c) => (c.id === client.id ? { ...c, ...data.client } : c))
           useAppStore.getState().setClients(updated)
@@ -54,9 +56,13 @@ export default function ProfileView() {
           auto: 'Modo IA activado',
         }
         addToast(labels[action] || 'Acción realizada', 'success')
+      } else {
+        addToast(data.error || 'Error al realizar acción', 'error')
       }
     } catch {
-      addToast('Error al realizar acción', 'error')
+      addToast('Error de conexión', 'error')
+    } finally {
+      setActionLoading(null)
     }
   }
 
@@ -128,17 +134,37 @@ export default function ProfileView() {
       )}
 
       <div className="grid grid-cols-2 gap-3">
-        <button onClick={() => handleAction('accept')} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-sm font-semibold hover:bg-emerald-500/25 transition-all active:scale-[0.97]">
-          <CheckCircle className="size-4" /> Aceptar
+        <button
+          type="button"
+          onClick={() => handleAction('accept')}
+          disabled={!!actionLoading}
+          className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-semibold transition-all active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed ${client.status === 'accepted' ? 'bg-emerald-500/30 text-emerald-300 border-emerald-500/50' : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25'}`}
+        >
+          {actionLoading === 'accept' ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle className="size-4" />} Aceptar
         </button>
-        <button onClick={() => handleAction('reject')} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500/15 text-red-400 border border-red-500/30 text-sm font-semibold hover:bg-red-500/25 transition-all active:scale-[0.97]">
-          <XCircle className="size-4" /> Rechazar
+        <button
+          type="button"
+          onClick={() => handleAction('reject')}
+          disabled={!!actionLoading}
+          className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-semibold transition-all active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed ${client.status === 'rejected' ? 'bg-red-500/30 text-red-300 border-red-500/50' : 'bg-red-500/15 text-red-400 border-red-500/30 hover:bg-red-500/25'}`}
+        >
+          {actionLoading === 'reject' ? <Loader2 className="size-4 animate-spin" /> : <XCircle className="size-4" />} Rechazar
         </button>
-        <button onClick={() => handleAction('negotiate')} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-500/15 text-blue-400 border border-blue-500/30 text-sm font-semibold hover:bg-blue-500/25 transition-all active:scale-[0.97]">
-          <MessageCircle className="size-4" /> Negociar
+        <button
+          type="button"
+          onClick={() => handleAction('negotiate')}
+          disabled={!!actionLoading}
+          className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-semibold transition-all active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed ${client.status === 'negotiating' ? 'bg-blue-500/30 text-blue-300 border-blue-500/50' : 'bg-blue-500/15 text-blue-400 border-blue-500/30 hover:bg-blue-500/25'}`}
+        >
+          {actionLoading === 'negotiate' ? <Loader2 className="size-4 animate-spin" /> : <MessageCircle className="size-4" />} Negociar
         </button>
-        <button onClick={() => handleAction('manual')} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30 text-sm font-semibold hover:bg-amber-500/25 transition-all active:scale-[0.97]">
-          <HandMetal className="size-4" /> TOMAR CONTROL
+        <button
+          type="button"
+          onClick={() => handleAction('manual')}
+          disabled={!!actionLoading}
+          className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-semibold transition-all active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed ${client.isManual && client.status === 'manual' ? 'bg-amber-500/30 text-amber-300 border-amber-500/50' : 'bg-amber-500/15 text-amber-400 border-amber-500/30 hover:bg-amber-500/25'}`}
+        >
+          {actionLoading === 'manual' ? <Loader2 className="size-4 animate-spin" /> : <HandMetal className="size-4" />} TOMAR CONTROL
         </button>
       </div>
 
