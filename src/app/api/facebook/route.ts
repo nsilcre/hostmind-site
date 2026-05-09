@@ -39,9 +39,6 @@ async function handleIncomingMessage(
   }
   if (client.isManual) { console.log(`[AI] Skipped: isManual=true`); return }
 
-  // Don't auto-respond to conversations already resolved by the host
-  if (['confirmed', 'accepted', 'rejected'].includes(client.status)) { console.log(`[AI] Skipped: status=${client.status}`); return }
-
   // Fetch history BEFORE saving current message so the Groq array never has timing issues
   const [aiConfig, activeProperties, history] = await Promise.all([
     db.aIConfig.findFirst(),
