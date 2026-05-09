@@ -49,7 +49,7 @@ async function handleIncomingMessage(
   })
 
   const groqApiKey = process.env.GROQ_API_KEY
-  let reply = aiConfig?.greetingMessage || '¡Hola! 👋 Gracias por contactarnos. Enseguida te atendemos.'
+  let reply: string | null = null
 
   if (groqApiKey) {
     try {
@@ -69,13 +69,18 @@ async function handleIncomingMessage(
       })
       if (res.ok) {
         const data = await res.json()
-        reply = data.choices?.[0]?.message?.content || reply
+        reply = data.choices?.[0]?.message?.content || null
       } else {
         const errData = await res.json().catch(() => ({}))
         console.error('[AI] Groq API error:', res.status, JSON.stringify(errData))
       }
     } catch (e) { console.error('[AI] Groq fetch error:', e) }
+  } else {
+    console.error('[AI] GROQ_API_KEY no configurada')
   }
+
+  // If Groq failed or returned nothing, don't send any message — admin will handle it manually
+  if (!reply) return
 
   const markerMatch = reply.match(/\[DATOS:(\{[\s\S]*?\})\]/)
   const pesadoMatch = reply.includes('[PESADO]')
@@ -129,6 +134,8 @@ async function handleIncomingMessage(
   const finalReply = markerMatch
     ? `${cleanReply ? cleanReply + '\n\n' : ''}Tu solicitud de reserva ha sido recibida y está pendiente de revisión por el propietario. En cuanto la confirme, recibirás un mensaje con todos los detalles. ¡Muchas gracias! 🏠`
     : cleanReply
+
+  if (!finalReply) return
 
   await db.message.create({ data: { clientId: client.id, role: 'assistant', content: finalReply } })
 
