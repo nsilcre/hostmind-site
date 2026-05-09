@@ -38,6 +38,26 @@ export default function ProfileView() {
     if (!client || !token || actionLoading) return
     setActionLoading(action)
     try {
+      // For Facebook classified clients, "accept" triggers confirm-booking:
+      // creates the calendar entry and sends a confirmation message to the client
+      if (action === 'accept' && client.channel === 'Facebook' && client.sourceId && client.profile) {
+        const res = await API('/api/facebook', token, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'confirm-booking', participantId: client.sourceId }),
+        })
+        const data = await res.json()
+        if (res.ok) {
+          const updatedClients = clients.map((c) =>
+            c.id === client.id ? { ...c, status: 'confirmed', isManual: true } : c
+          )
+          useAppStore.getState().setClients(updatedClients)
+          addToast('Reserva confirmada y cliente notificado', 'success')
+        } else {
+          addToast(data.error || 'Error al confirmar reserva', 'error')
+        }
+        return
+      }
+
       const res = await API(`/api/action/${client.id}`, token, {
         method: 'POST',
         body: JSON.stringify({ action }),
