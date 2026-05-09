@@ -517,6 +517,12 @@ export async function POST(req: NextRequest) {
         await db.connection.create({ data: { userId: adminUser.id, provider: 'facebook', ...connData } })
       }
 
+      // Subscribe the page to receive message webhooks
+      await fetch(
+        `https://graph.facebook.com/v21.0/${verifyData.id}/subscribed_apps?subscribed_fields=messages&access_token=${pageToken}`,
+        { method: 'POST' }
+      ).catch(e => console.error('Page subscription error:', e))
+
       return NextResponse.json({
         success: true,
         pageName: verifyData.name,
@@ -601,6 +607,12 @@ export async function POST(req: NextRequest) {
           },
         })
       }
+
+      // Subscribe the page to receive message webhooks
+      await fetch(
+        `https://graph.facebook.com/v21.0/${page.id}/subscribed_apps?subscribed_fields=messages&access_token=${page.access_token}`,
+        { method: 'POST' }
+      ).catch(e => console.error('Page subscription error:', e))
 
       return NextResponse.json({
         success: true,
