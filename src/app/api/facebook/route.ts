@@ -187,13 +187,8 @@ export async function GET(req: NextRequest) {
   }
 
   const action = searchParams.get('action')
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
 
-  if (!token) {
-    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-  }
-
-  // AI diagnostic: test Groq connection and last client status
+  // AI diagnostic — no auth required so it can be tested directly in browser
   if (action === 'test-ai') {
     const groqApiKey = process.env.GROQ_API_KEY
     if (!groqApiKey) return NextResponse.json({ ok: false, reason: 'GROQ_API_KEY no configurada en el entorno' })
@@ -216,6 +211,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ ok: false, reason: 'Excepción llamando a Groq', detail: String(e) })
     }
   }
+
+  const token = req.headers.get('authorization')?.replace('Bearer ', '')
+  if (!token) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
 
   // Connection status
   if (action === 'status') {
