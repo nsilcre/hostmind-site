@@ -221,6 +221,21 @@ export async function GET(req: NextRequest) {
 
   const action = searchParams.get('action')
 
+  // Check which webhook fields the page is subscribed to
+  if (action === 'check-subscription') {
+    const connection = await getFacebookConnection()
+    if (!connection?.accessToken) return NextResponse.json({ ok: false, reason: 'No connection' })
+    const r = await fetch(`https://graph.facebook.com/v21.0/${connection.pageId}/subscribed_apps?access_token=${connection.accessToken}`)
+    const d = await r.json()
+    // Also re-subscribe to ensure messages is active
+    const subRes = await fetch(
+      `https://graph.facebook.com/v21.0/${connection.pageId}/subscribed_apps?subscribed_fields=messages,messaging_postbacks&access_token=${connection.accessToken}`,
+      { method: 'POST' }
+    )
+    const subData = await subRes.json()
+    return NextResponse.json({ currentSubscriptions: d, resubscribeResult: subData, pageId: connection.pageId })
+  }
+
   // Full send diagnostic: verifies token + sends a real test message to the most recent FB client
   if (action === 'test-send') {
     const connection = await getFacebookConnection()
