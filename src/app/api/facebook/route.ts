@@ -37,15 +37,16 @@ async function handleIncomingMessage(
   // Don't auto-respond to conversations already resolved by the host
   if (['confirmed', 'accepted', 'rejected'].includes(client.status)) return
 
-  await db.message.create({
-    data: { clientId: client.id, role: 'user', content: messageText, sourceId: messageId },
-  })
-
+  // Fetch history BEFORE saving current message so the Groq array never has timing issues
   const [aiConfig, activeProperties, history] = await Promise.all([
     db.aIConfig.findFirst(),
     db.property.findMany({ where: { status: 'active' }, orderBy: { name: 'asc' } }),
     db.message.findMany({ where: { clientId: client.id }, orderBy: { createdAt: 'asc' }, take: 20 }),
   ])
+
+  await db.message.create({
+    data: { clientId: client.id, role: 'user', content: messageText, sourceId: messageId },
+  })
 
   const groqApiKey = process.env.GROQ_API_KEY
   let reply = aiConfig?.greetingMessage || '¡Hola! 👋 Gracias por contactarnos. Enseguida te atendemos.'
@@ -60,6 +61,7 @@ async function handleIncomingMessage(
           messages: [
             { role: 'system', content: buildQualificationPrompt(activeProperties, aiConfig) },
             ...history.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
+            { role: 'user', content: messageText },
           ],
           max_tokens: 200,
           temperature: 0.75,
