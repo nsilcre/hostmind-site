@@ -72,21 +72,9 @@ export default function MessagesView() {
   useEffect(() => {
     if (!isFbConnected || !token) return
     fetchFbConversations()
-    const interval = setInterval(fetchFbConversations, 15000)
+    const interval = setInterval(fetchFbConversations, 60000)
     return () => clearInterval(interval)
   }, [isFbConnected, fetchFbConversations, token])
-
-  useEffect(() => {
-    if (!isFbConnected || !token) return
-    const autoReply = () =>
-      API('/api/facebook?action=auto-reply', token)
-        .then(r => r.json())
-        .then(d => { if (d.processed > 0) { fetchFbConversations(); } })
-        .catch(() => {})
-    autoReply()
-    const interval = setInterval(autoReply, 15000)
-    return () => clearInterval(interval)
-  }, [isFbConnected, token, fetchFbConversations])
 
   const filteredFbConversations = fbConversations.filter(c => {
     if (fbSearch && !c.participant?.name?.toLowerCase().includes(fbSearch.toLowerCase()) &&

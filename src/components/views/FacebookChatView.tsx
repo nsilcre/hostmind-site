@@ -127,7 +127,7 @@ export default function FacebookChatView({ conversation, onBack, token }: Facebo
           }
         })
         .catch(() => {})
-    }, 8000)
+    }, 30000)
     return () => clearInterval(interval)
   }, [conversation.id, token])
 
