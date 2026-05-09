@@ -8,7 +8,6 @@ async function verifyPassword(plaintext: string, stored: string, userId: string)
   if (stored.startsWith('$2')) {
     return bcrypt.compare(plaintext, stored)
   }
-  // Contraseñas antiguas SHA-256: verificar y migrar a bcrypt en el acto
   const sha256 = createHash('sha256').update(plaintext).digest('hex')
   if (sha256 !== stored) return false
   const newHash = await bcrypt.hash(plaintext, 12)

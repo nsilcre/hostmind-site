@@ -14,6 +14,7 @@ export interface Client {
   profile: string | null
   summary: string | null
   isManual: boolean
+  sourceId?: string | null
   createdAt: string
 }
 

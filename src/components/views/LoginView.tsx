@@ -12,7 +12,6 @@ import { useToasts } from '@/components/shared/ToastProvider'
 export default function LoginView() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -59,7 +58,6 @@ export default function LoginView() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-zinc-950">
-      {/* ── Animated gradient mesh background ── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
           className="absolute -top-1/4 -left-1/4 w-[600px] h-[600px] rounded-full opacity-30 blur-[120px]"
@@ -93,7 +91,6 @@ export default function LoginView() {
         />
       </div>
 
-      {/* ── Keyframe styles injected ── */}
       <style jsx global>{`
         @keyframes meshFloat1 {
           0%, 100% { transform: translate(0, 0) scale(1); }
@@ -119,7 +116,6 @@ export default function LoginView() {
         }
       `}</style>
 
-      {/* ── Glass card ── */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -143,9 +139,7 @@ export default function LoginView() {
             }}
           />
 
-          {/* Main card content */}
           <div className="relative rounded-2xl backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] p-8 shadow-2xl">
-            {/* ── Logo section ── */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -166,7 +160,6 @@ export default function LoginView() {
               </p>
             </motion.div>
 
-            {/* ── Login form ── */}
             <motion.form
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -219,31 +212,6 @@ export default function LoginView() {
                 </div>
               </div>
 
-              {/* Remember me */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 cursor-pointer select-none group">
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="sr-only peer"
-                    />
-                    <div className="w-4 h-4 rounded border border-white/20 bg-white/[0.04] peer-checked:bg-amber-500 peer-checked:border-amber-500 transition-all duration-200 flex items-center justify-center">
-                      {rememberMe && (
-                        <Check className="size-3 text-white" strokeWidth={3} />
-                      )}
-                    </div>
-                  </div>
-                  <span className="text-sm text-zinc-400 group-hover:text-zinc-300 transition-colors">
-                    Recordarme
-                  </span>
-                </label>
-                <button type="button" className="text-sm text-amber-500/70 hover:text-amber-400 transition-colors">
-                  ¿Olvidaste tu contraseña?
-                </button>
-              </div>
-
               {/* Error message */}
               {error && (
                 <motion.div
@@ -288,7 +256,6 @@ export default function LoginView() {
               </motion.div>
             </motion.form>
 
-            {/* ── Demo credentials ── */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -333,7 +300,6 @@ export default function LoginView() {
           </div>
         </div>
 
-        {/* ── Footer ── */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -1,32 +1,14 @@
 'use client'
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import {
-  ChevronLeft, ChevronRight, RefreshCw, Send, Plus, Trash2, Star, Bot,
-  User, Globe, Facebook, Phone, Building2, X,
-  CheckCircle, XCircle, Loader2, Eye, HandMetal, Sparkles,
-  Users, UsersRound, Clock, MessageCircle,
-  Wifi, Building, Bell, Search, MapPin, Bed, Bath, Euro,
-  ArrowUpRight, Activity as ActivityIcon, AlertTriangle, Zap,
-  Moon, Sun, Package, CreditCard, Info
-} from 'lucide-react'
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { ChevronLeft, Loader2, CheckCircle, XCircle, HandMetal, Sparkles, MessageCircle, Eye, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
-  DialogFooter, DialogTrigger
-} from '@/components/ui/dialog'
 import { useAppStore } from '@/lib/store'
-import { useToasts, ToastProvider, ToastContainer, ShimmerCard } from '@/components/shared/ToastProvider'
+import { useToasts } from '@/components/shared/ToastProvider'
 import { ScoreRing } from '@/components/shared/ScoreRing'
-import { API, fadeIn, staggerContainer, slideUp, scoreBg, channelIcon, statusIcon, notifIcon, activityIcon, propertyTypeIcon, propertyTypeLabel, propertyStatusLabel, timeAgo, MONTHS_ES, MONTHS_SHORT, DAYS_ES } from '@/components/shared/helpers'
+import { API, fadeIn, scoreBg, channelIcon } from '@/components/shared/helpers'
 
 export default function ProfileView() {
   const { clients, viewParams, navigate, token } = useAppStore()
