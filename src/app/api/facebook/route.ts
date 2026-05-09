@@ -58,13 +58,18 @@ async function handleIncomingMessage(
         headers: { 'Authorization': `Bearer ${groqApiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: buildQualificationPrompt(activeProperties, aiConfig) },
-            ...history
+          messages: (() => {
+            const mapped = history
               .map(m => ({ role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant', content: m.content }))
-              .filter((m, i, arr) => i === 0 || arr[i - 1].role !== m.role),
-            { role: 'user', content: messageText },
-          ],
+              .filter((m, i, arr) => i === 0 || arr[i - 1].role !== m.role)
+            // Remove trailing user messages so the current one is never duplicated
+            while (mapped.length > 0 && mapped[mapped.length - 1].role === 'user') mapped.pop()
+            return [
+              { role: 'system' as const, content: buildQualificationPrompt(activeProperties, aiConfig) },
+              ...mapped,
+              { role: 'user' as const, content: messageText },
+            ]
+          })(),
           max_tokens: 200,
           temperature: 0.75,
         }),
