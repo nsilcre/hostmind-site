@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromRequest } from '@/app/api/auth/route'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { randomUUID } from 'crypto'
+import { v2 as cloudinary } from 'cloudinary'
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 export async function POST(req: NextRequest) {
   if (!getSessionFromRequest(req)) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
@@ -21,14 +25,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'El archivo no puede superar 5 MB' }, { status: 400 })
     }
 
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-    const filename = `${randomUUID()}.${ext}`
-    const uploadDir = join(process.cwd(), 'public', 'uploads')
+    const buffer = Buffer.from(await file.arrayBuffer())
+    const base64 = `data:${file.type};base64,${buffer.toString('base64')}`
 
-    await mkdir(uploadDir, { recursive: true })
-    await writeFile(join(uploadDir, filename), Buffer.from(await file.arrayBuffer()))
+    const result = await cloudinary.uploader.upload(base64, {
+      folder: 'hostmind/properties',
+      resource_type: 'image',
+    })
 
-    return NextResponse.json({ url: `/uploads/${filename}` })
+    return NextResponse.json({ url: result.secure_url })
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json({ error: 'Error al subir el archivo' }, { status: 500 })
